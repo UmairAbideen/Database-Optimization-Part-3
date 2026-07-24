@@ -215,25 +215,206 @@ DB::select(
 
 ---
 
-# 5️⃣ Query Performance Analysis
+# 5️⃣ Query Performance Monitoring
 
-## Measuring Query Performance
+## What is Query Performance Monitoring?
 
-Laravel can log executed SQL queries.
+Query Performance Monitoring helps identify slow database queries, unnecessary database calls, and performance issues inside a Laravel application.
+
+Think:
+
+> "Measure first, optimize second."
+
+A query that works correctly may still be inefficient when the database grows.
+
+---
+
+## Using Laravel Debugbar
+
+This project uses **Laravel Debugbar** to monitor database performance during development.
+
+Laravel Debugbar provides a visual dashboard showing:
+
+- Executed SQL queries
+- Number of queries
+- Query execution time
+- Duplicate queries
+- N+1 query problems
+- Route execution time
+- Memory usage
+
+---
+
+## Install Laravel Debugbar
+
+Install using Composer:
+
+```bash
+composer require barryvdh/laravel-debugbar --dev
+```
+
+Laravel automatically discovers the package.
+
+---
+
+## Debugbar Example
+
+Before Optimization:
+
+```text
+Database Queries: 101
+
+Execution Time: 250ms
+
+Memory Usage: 20MB
+```
+
+Problem:
+
+```
+N+1 Query Problem Detected
+```
+
+---
+
+After Optimization:
+
+Using eager loading:
 
 ```php
-DB::enableQueryLog();
+User::with('posts')->get();
+```
 
+Result:
+
+```text
+Database Queries: 2
+
+Execution Time: 20ms
+
+Memory Usage: Reduced
+```
+
+---
+
+# Query Performance Flow
+
+```text
+User Request
+      │
+      ▼
+Laravel Application
+      │
+      ▼
+Database Query Executed
+      │
+      ▼
+Laravel Debugbar Captures Data
+      │
+      ▼
+Analyze Queries
+      │
+      ▼
+Optimize Database Performance
+```
+
+---
+
+# Common Performance Issues Detected
+
+## 1️⃣ Too Many Queries
+
+Example:
+
+```php
+$users = User::all();
+
+foreach($users as $user){
+
+    echo $user->posts;
+
+}
+```
+
+Debugbar shows:
+
+```
+101 Queries
+```
+
+Solution:
+
+```php
+User::with('posts')->get();
+```
+
+Result:
+
+```
+2 Queries
+```
+
+---
+
+## 2️⃣ Slow Queries
+
+Example:
+
+```php
+User::where('email',$email)->first();
+```
+
+If email has no index:
+
+```
+Full Table Scan
+```
+
+Solution:
+
+```php
+$table->index('email');
+```
+
+---
+
+## 3️⃣ Unnecessary Data Loading
+
+Before:
+
+```php
 User::all();
-
-dd(DB::getQueryLog());
 ```
 
-Or inspect query execution using:
+After:
 
-```sql
-EXPLAIN SELECT * FROM users;
+```php
+User::select('id','name')->get();
 ```
+
+Only required columns are retrieved.
+
+---
+
+# Benefits of Query Monitoring
+
+- ✅ Detect slow queries
+- ✅ Find N+1 problems
+- ✅ Reduce database calls
+- ✅ Improve response time
+- ✅ Optimize Laravel applications
+
+---
+
+# Tools Used
+
+| Tool | Purpose |
+|------|---------|
+| Laravel Debugbar | Query monitoring |
+| Eloquent ORM | Database interaction |
+| MySQL | Database engine |
+| Laravel Telescope | Advanced application monitoring |
+
 
 ### Things to Check
 
@@ -242,63 +423,6 @@ EXPLAIN SELECT * FROM users;
 - Index Usage
 - Full Table Scans
 - Slow Queries
-
----
-
-# 📋 SQL Optimization Flow
-
-```text
-Application Request
-        │
-        ▼
-Generate SQL Query
-        │
-        ▼
-Use Indexes
-        │
-        ▼
-Optimize Query
-        │
-        ▼
-Execute Efficient SQL
-        │
-        ▼
-Return Results Faster
-```
-
----
-
-# 📦 Useful Laravel Commands
-
-### Create Migration
-
-```bash
-php artisan make:migration create_users_table
-```
-
-### Run Migrations
-
-```bash
-php artisan migrate
-```
-
-### View Query Log
-
-```php
-DB::enableQueryLog();
-```
-
-### Clear Cache
-
-```bash
-php artisan optimize:clear
-```
-
-### Start Development Server
-
-```bash
-php artisan serve
-```
 
 ---
 
@@ -311,68 +435,3 @@ php artisan serve
 | Raw Queries | Direct SQL execution | Complex SQL operations |
 | Eloquent | Readable ORM | CRUD applications |
 | Query Performance | Analyze SQL efficiency | Performance tuning |
-
----
-
-# 🔥 Real-World Example
-
-### E-Commerce Application
-
-A customer searches for a product.
-
-Instead of scanning **500,000 products**, the database:
-
-- Uses an index
-- Retrieves only required columns
-- Executes an optimized query
-- Returns results quickly
-
-Application Flow:
-
-```text
-User Searches Product
-        │
-        ▼
-Optimized SQL Query
-        │
-        ▼
-Database Uses Index
-        │
-        ▼
-Retrieve Matching Records
-        │
-        ▼
-Display Results
-```
-
----
-
-# 📌 Features
-
-- Database Indexing
-- Composite Indexes
-- Query Optimization
-- Raw SQL Queries
-- Eloquent ORM Comparison
-- Query Performance Analysis
-- SQL Best Practices
-- Laravel Database Optimization
-
----
-
-## 📷 Screenshots
-
-Add screenshots of the following:
-
-- Database Indexes
-- Optimized Query Results
-- Query Log Output
-- SQL EXPLAIN Result
-- Performance Comparison
-
----
-
-## 📄 License
-
-This project is open-source and available under the **MIT License**.
-````
