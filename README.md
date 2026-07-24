@@ -383,30 +383,6 @@ Queries: 2
 
 Execution Time: 20ms
 ```
-
----
-
-# Query Performance Flow
-
-```
-User Request
-        |
-        ▼
-Laravel Application
-        |
-        ▼
-Database Query
-        |
-        ▼
-Laravel Debugbar
-        |
-        ▼
-Analyze Performance
-        |
-        ▼
-Optimize Query
-```
-
 ---
 
 # Common Performance Problems
