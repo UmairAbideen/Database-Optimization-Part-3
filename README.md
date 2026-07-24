@@ -504,7 +504,7 @@ During optimization check:
 
 ---
 
-# ⚖️ Final Comparision
+# ⚖️ Final Comparison
 
 | Feature | Purpose | Best Used For |
 |---------|---------|--------------|
