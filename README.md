@@ -1,4 +1,4 @@
-# ⚡ Laravel Database Optimization (Part 3) - SQL Performance
+# ⚡ Database Optimization (Part 3) - SQL Performance
 
 This project demonstrates how to optimize SQL queries in **Laravel 10** using **Database Indexing**, **Query Optimization**, **Raw Queries**, and **Eloquent Performance Comparisons**. These techniques help reduce query execution time, improve database efficiency, and build scalable applications.
 
